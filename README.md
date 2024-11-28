@@ -1,4 +1,4 @@
-# OmniSteward 全能管家
+![OmniSteward 全能管家](./assets/logo.png)
 
 [中文文档](README_zh.md)
 
