@@ -7,7 +7,7 @@
 这是一个基于大语言模型的全能管家系统，可以通过语音或文字与用户交互，帮助控制智能家居设备和电脑程序。
 
 ## 演示视频
-
+![多轮对话演示GIF](./assets/multi-round.gif)
 我们准备了一系列演示视频，请观看[演示视频](https://youtube.com/playlist?list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ&si=ZcZVOO6mfteR120a)了解系统的主要功能和使用方法。
 
 

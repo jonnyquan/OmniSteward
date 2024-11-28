@@ -8,6 +8,8 @@
 
 This is an AI-powered steward system based on large language models that can interact with users through voice or text to help control smart home devices and computer programs.
 
+![image](./assets/multi-round.gif)
+
 ## Highlights
 
 - Supports multi-turn dialogue for continuous user interaction
