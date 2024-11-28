@@ -25,7 +25,7 @@ This is an AI-powered steward system based on large language models that can int
 
 ## Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=tm3gJkbIZeWP2gyY&amp;list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+We prepared a series of demo videos, please watch [demo videos](https://youtube.com/playlist?list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ&si=ZcZVOO6mfteR120a) to understand the main features and usage of the system.
 
 
 ## System Requirements

@@ -8,7 +8,8 @@
 
 ## 演示视频
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=tm3gJkbIZeWP2gyY&amp;list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+我们准备了一系列演示视频，请观看[演示视频](https://youtube.com/playlist?list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ&si=ZcZVOO6mfteR120a)了解系统的主要功能和使用方法。
+
 
 ## 亮点
 
