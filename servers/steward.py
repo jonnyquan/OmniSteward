@@ -94,6 +94,32 @@ def chat(query, model:str, history_id:str|None = None):
     return Response(stream_with_context(gen_wrapper()), content_type='application/json')
 
 
+@app.route('/api/transcribe', methods=['POST'])
+def transcribe_api():
+    try:
+        if 'audio' not in request.files:
+            return jsonify({'error': '没有上传音频文件'}), 400
+        audio_file = request.files['audio']
+        if audio_file.filename == '':
+            return jsonify({'error': '文件名为空'}), 400
+        # 直接从内存中读取文件内容
+        audio_content = audio_file.read()
+        # 转发请求到转写服务器
+        time_start = time.time()
+        print(f"开始转写")
+        text = transcribe(audio_content)
+        print(f"转写时间: {time.time() - time_start:.2f}s")
+        return jsonify({
+            'success': True,
+            'text': text
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 # 音频上传API
 @app.route('/api/upload-audio', methods=['POST'])
 def upload_audio():
@@ -120,7 +146,7 @@ def upload_audio():
             'success': False,
             'error': str(e)
         }), 500
-    
+
 
 @app.route('/api/chat', methods=['POST'])
 def chat_api():

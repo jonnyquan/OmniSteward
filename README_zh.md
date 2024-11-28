@@ -6,6 +6,10 @@
 
 这是一个基于大语言模型的全能管家系统，可以通过语音或文字与用户交互，帮助控制智能家居设备和电脑程序。
 
+## 演示视频
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=tm3gJkbIZeWP2gyY&amp;list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 ## 亮点
 
 - 支持多轮对话，可以连续回答用户问题

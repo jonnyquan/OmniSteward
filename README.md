@@ -23,6 +23,11 @@ This is an AI-powered steward system based on large language models that can int
 - 🔍 Online information retrieval (via Kimi AI)
 - ⌨️ Command line operations
 
+## Demo Video
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?si=tm3gJkbIZeWP2gyY&amp;list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+
 ## System Requirements
 
 - Python 3.8+
