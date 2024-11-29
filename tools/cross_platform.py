@@ -338,6 +338,18 @@ class AskKimi(Tool):
                 self.create_driver(force=True)
         return "查询失败"
 
+class ListDir(Tool):
+    name = "list_dir"
+    description = "列出文件夹内容"
+    parameters = {
+        "dir": {
+            "type": "string",
+            "description": "文件夹路径",
+        }
+    }
+    
+    def __call__(self, dir: str):
+        return os.listdir(dir)
 
 
 class PrepareDownload(Tool):

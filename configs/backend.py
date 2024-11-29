@@ -20,7 +20,7 @@ bemfa_uid = os.environ["BEMFA_UID"]
 bemfa_topic = os.environ["BEMFA_TOPIC"]
 
 # used in kimi_profile
-kimi_profile_path = os.environ["KIMI_PROFILE_PATH"]
+kimi_profile_path = os.getenv("KIMI_PROFILE_PATH", None)
 
 system_prompt = get_system_prompt(os.environ["LOCATION"])
 
@@ -33,10 +33,11 @@ tool_names = [
     'bemfa_control',
     'write_file',
     'read_file',
+    'list_dir',
     'cmd',
     'ask_kimi',
     'browser',
-    'everything',
+    'enhanced_everything',
     'timer',
     'prepare_download'
 ]
