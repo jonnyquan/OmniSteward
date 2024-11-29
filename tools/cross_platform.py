@@ -7,7 +7,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 from utils.bemfa import BemfaTCPClient
-from tools.base import Tool, Config
+from tools.base import Tool, Config, ToolResult
 
 class MihomeControl(Tool):
     '''
@@ -340,3 +340,42 @@ class AskKimi(Tool):
 
 
 
+class PrepareDownload(Tool):
+    name = "prepare_download"
+    description = "提供文件供用户下载"
+    parameters = {
+        "file": {
+            "type": "string",
+            "description": "文件路径",
+        }
+    }
+    config_items = [
+        {'key': 'port', 'default': 8000, 'required': True},
+        {'key': 'access_token', 'default': None, 'required': True},
+    ]
+    def __init__(self, config: Config):
+        super().__init__(config)
+        self.prepare_file_url = f'http://localhost:{self.port}/api/prepare_download'
+        self.download_url = f'http://localhost:{self.port}/api/download'
+        self.kwargs = {'access_token': self.access_token}
+    
+    def __call__(self, file: str):
+        """提供下载文件
+        返回一个file_id，供用户下载
+        Args:
+            file: 文件路径
+            
+        Returns:
+            下载结果
+        """
+        file = os.path.abspath(file).replace('\\', '/')
+        # ask server to prepare file
+        response = requests.post(self.prepare_file_url, json={'file': file, **self.kwargs})
+        if response.status_code != 200:
+            return ToolResult(status='error', content=f"准备文件失败: {response.text}")
+        file_id = response.json()['file_id']
+        return ToolResult(status='success', content=f"准备文件成功，现在可以在网页上点击下载", action={
+            'type': 'create_download',
+            'url': f'{self.download_url}?file_id={file_id}&access_token={self.access_token}',
+            'file_name': os.path.basename(file),
+        })

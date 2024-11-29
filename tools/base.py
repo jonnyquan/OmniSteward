@@ -10,6 +10,22 @@ elif current_os == "posix":
 elif current_os == "mac":
     current_os = "macos"
 
+
+class ToolResult:
+    ignore_keys = ["is_tool_result", "action"]
+    def __init__(self, status: str, content: str, action: dict = None, is_tool_result: bool = True):
+        self.status = status
+        self.content = content
+        self.action = action
+        self.is_tool_result = is_tool_result
+
+    def __str__(self):
+        return str({k:v for k,v in self.__dict__.items() if k not in self.ignore_keys})
+    
+    def to_dict(self):
+        return {k:v for k,v in self.__dict__.items()}
+
+
 # 添加ToolMetaclass
 class ToolMetaclass(type):
     registered_tools = {}  # 用于存储所有工具类

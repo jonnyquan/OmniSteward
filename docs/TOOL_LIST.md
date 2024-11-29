@@ -12,6 +12,7 @@
 - `browser`: 打开网页
 - `cmd`: 执行命令行命令
 - `write_file`: 写入文件
+- `prepare_download`: 准备下载文件, 返回文件下载链接
 
 ## 指定使用哪些工具
 

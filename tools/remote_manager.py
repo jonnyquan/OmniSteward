@@ -1,4 +1,5 @@
 import requests
+from .base import ToolResult
 
 class RemoteToolManager:
     '''
@@ -25,7 +26,11 @@ class RemoteToolManager:
 
     def call(self, tool_name:str, params:dict):
         response = requests.post(f"{self.tool_api_url}", json={"tool_name": tool_name, "tool_params": params, "action_type":"call", **self.kwargs})
-        return response.json()
+        call_res = response.json()
+        if isinstance(call_res, dict) and call_res.get("is_tool_result"):
+            return ToolResult(**call_res)
+        else:
+            return call_res
     
     def json(self):
         if not self._initialized:

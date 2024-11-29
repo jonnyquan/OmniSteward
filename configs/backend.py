@@ -38,4 +38,5 @@ tool_names = [
     'browser',
     'everything',
     'timer',
+    'prepare_download'
 ]

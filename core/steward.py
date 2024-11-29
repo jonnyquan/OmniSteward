@@ -1,7 +1,7 @@
 import json
 from openai import OpenAI
 import time
-from tools import ToolManager, Config
+from tools import ToolManager, Config, ToolResult
 from core.task import RemoteToolManager
 
 def get_fn_args(fn_call: dict):
@@ -64,6 +64,7 @@ output_type2prefix = {
     "content": "【AI】",
     "debug": "【调试信息】",
     "error": "【错误】",
+    "action": "【动作】",
 }
 
 class StewardOutput:
@@ -150,6 +151,10 @@ class OmniSteward:
 
                     tool_start = time.time()
                     fn_res = self.tool_manager.call(fn_name, fn_args)
+                    if isinstance(fn_res, ToolResult) and fn_res.action is not None:
+                        yield StewardOutput("action", fn_res.action) # 创建一个新动作
+                        fn_res = fn_res.content
+
                     tool_time = time.time() - tool_start
                     
                     fn_res = json.dumps(fn_res, ensure_ascii=False)
@@ -170,6 +175,8 @@ def get_generate(sutando: OmniSteward, query: str, history: list[dict]):
             if output_type == "history":
                 yield output
                 break  # 继续下一轮对话
+            elif output_type == "action":
+                yield output
             elif output_type == "error":
                 yield str(output)
                 break

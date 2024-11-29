@@ -1,10 +1,11 @@
-from flask import Flask, request, jsonify, Response, stream_with_context
+from flask import Flask, request, jsonify, Response, stream_with_context, send_file
 from werkzeug.middleware.proxy_fix import ProxyFix
 from core.steward import OmniSteward, HistoryManager, get_generate, StewardOutput
 from core.task import ScheduledTaskRunner
+from core.file import FileManager
 from utils.asr_client import OnlineASR
 from configs import load_and_merge_config, get_updated_config
-from tools import ToolManager, RemoteToolManager
+from tools import ToolManager, RemoteToolManager, ToolResult
 import requests
 import time
 import json
@@ -33,6 +34,12 @@ remote_tool_manager = RemoteToolManager(f'http://localhost:{config.port}/api/too
 history_manager = HistoryManager() # 管理对话历史记录
 task_runner = ScheduledTaskRunner(remote_tool_manager) # 定时任务调度器
 task_runner.start()
+file_manager = FileManager()
+
+
+def verify_access_token(data):
+    access_token = data.get('access_token', '')
+    return access_token == config.access_token
 
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
@@ -81,16 +88,28 @@ def chat(query, model:str, history_id:str|None = None):
     def gen_wrapper():
         for output in generate():
             if isinstance(output, str):
-                output = output.strip() + "<split>"
-                yield output
-            elif isinstance(output, StewardOutput):
-                # 时间戳作为history_id
-                timestamp = time.time()
-                new_history_id = f"{timestamp:.6f}"
-                history_manager.add(new_history_id, output.data)
+                output = output.strip()
                 yield json.dumps({
-                    "history_id": new_history_id,
-                })
+                    "type": "content",
+                    "content": output
+                })+"<split>"
+            elif isinstance(output, StewardOutput):
+                if output.type == "history":
+                    # 时间戳作为history_id
+                    timestamp = time.time()
+                    new_history_id = f"{timestamp:.6f}"
+                    history_manager.add(new_history_id, output.data)
+                    yield json.dumps({
+                        "type": "history",
+                        "history_id": new_history_id,
+                    })+"<split>"
+                elif output.type == "action":
+                    print(f"DEBUG - 创建动作: {output.data}")
+                    yield json.dumps({
+                        "type": "action",
+                        "action": output.data
+                    })+"<split>"
+
     return Response(stream_with_context(gen_wrapper()), content_type='application/json')
 
 
@@ -162,13 +181,16 @@ def chat_api():
 def tool_api():
     data = request.json
     action_type = data.get('action_type', '')
-    access_token = data.get('access_token', '')
-    if access_token != config.access_token:
+    if not verify_access_token(data):
         return jsonify({'error': '无效的access_token'}), 401
     if action_type == 'call':
         tool_name = data.get('tool_name', '')
         tool_params = data.get('tool_params', {})
-        return jsonify(tool_manager.call(tool_name, tool_params))
+        tool_res = tool_manager.call(tool_name, tool_params)
+        if isinstance(tool_res, ToolResult):
+            return jsonify(tool_res.to_dict())
+        else:
+            return jsonify(tool_res)
     elif action_type == 'list':
         return jsonify(tool_manager.tool_names)
     elif action_type == 'json':
@@ -180,11 +202,31 @@ def tool_api():
 @app.route('/api/schedule_task', methods=['POST'])
 def schedule_task_api():
     data = request.json
-    access_token = data.get('access_token', '')
-    if access_token != config.access_token:
+    if not verify_access_token(data):
         return jsonify({'error': '无效的access_token'}), 401
     task_runner.add_scheduled_task(data.get('schedule_time', ''), data.get('tool_name', ''), data.get('tool_params', {}))
     return jsonify({'success': True})
+
+@app.route('/api/prepare_download', methods=['POST'])
+def prepare_download_api():
+    data = request.json
+    if not verify_access_token(data):
+        return jsonify({'error': '无效的access_token'}), 401
+    file_id = file_manager.add(data.get('file', ''))
+    return jsonify({'file_id': file_id})
+
+@app.route('/api/download', methods=['GET'])
+def download_api():
+    file_id = request.args.get('file_id', '')
+
+    if not verify_access_token(request.args):
+        return jsonify({'error': '无效的access_token'}), 401
+    file_path = file_manager.get(file_id)
+    print(f"DEBUG - 下载文件: {file_path}, file_id: {file_id}")
+    if file_path is None:
+        return jsonify({'error': '文件不存在'}), 404
+    return send_file(file_path, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=config.port, debug=args.debug)
