@@ -12,6 +12,7 @@ def get_default_system_prompt_func(location=default_location):
             f"以下是一些环境信息，在你解决问题时需要充分考虑这些信息：",
             f"当前时间：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
             f"你现在所处的操作系统是：{os_name}",
+            f"当前用户是：{os.getlogin()}",
             f"当前目录是：{os.path.abspath(os.getcwd())}",
             f"你的位置是：{location}",
         ]

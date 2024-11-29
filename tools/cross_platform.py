@@ -368,7 +368,7 @@ class PrepareDownload(Tool):
     def __init__(self, config: Config):
         super().__init__(config)
         self.prepare_file_url = f'http://localhost:{self.port}/api/prepare_download'
-        self.download_url = f'http://localhost:{self.port}/api/download'
+        self.download_url = f'/api/download' # 因为不知道是不是从外网访问，因此不加host
         self.kwargs = {'access_token': self.access_token}
     
     def __call__(self, file: str):
@@ -388,6 +388,6 @@ class PrepareDownload(Tool):
         file_id = response.json()['file_id']
         return ToolResult(status='success', content=f"准备文件成功，现在可以在网页上点击下载", action={
             'type': 'create_download',
-            'url': f'{self.download_url}?file_id={file_id}&access_token={self.access_token}',
+            'url': f'/api/download?file_id={file_id}&access_token={self.access_token}',
             'file_name': os.path.basename(file),
         })
