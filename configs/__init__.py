@@ -1,11 +1,20 @@
 import importlib
 from types import ModuleType, FunctionType, SimpleNamespace
 from .default import default_config
+import json
 
 
 class Config(SimpleNamespace):
     def get(self, key, default=None):
         return getattr(self, key, default)
+    
+    def dump2json(self):
+        sub_config = {}
+        for key, value in self.__dict__.items():
+            if isinstance(value, ModuleType) or isinstance(value, FunctionType) or isinstance(value, type):
+                continue
+            sub_config[key] = value
+        return json.dumps(sub_config, indent=4, ensure_ascii=False)
 
 
 def load_and_merge_config(config_path, default_config=default_config) -> Config:
@@ -14,7 +23,11 @@ def load_and_merge_config(config_path, default_config=default_config) -> Config:
     imported_config = importlib.import_module(config_path)
     
     valid_config = {}
+    required_keys = ['system_prompt_func']
     for key, value in imported_config.__dict__.items():
+        if key in required_keys:
+            valid_config[key] = value
+            continue
         if key.startswith('_'):
             continue
         # 如果是module或者是class就不要

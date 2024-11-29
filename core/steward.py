@@ -62,7 +62,7 @@ class OmniSteward:
     '''
     def __init__(self, config: Config, tool_manager: ToolManager|RemoteToolManager):
         self.config = config
-        self.system_prompt = config.system_prompt
+        self.system_prompt = config.system_prompt_func() # 实时生成系统提示词，因为环境信息会变化
         self.model_name = config.model
         self.max_rounds = config.max_rounds
         self.openai_api_base = config.openai_api_base

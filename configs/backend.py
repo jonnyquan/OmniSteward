@@ -1,6 +1,6 @@
 import os
 import uuid
-from .default import get_system_prompt
+from .default import get_default_system_prompt_func
 
 # backend config
 frontend_url = "http://localhost:3000" # 前端服务器地址
@@ -22,7 +22,7 @@ bemfa_topic = os.environ["BEMFA_TOPIC"]
 # used in kimi_profile
 kimi_profile_path = os.getenv("KIMI_PROFILE_PATH", None)
 
-system_prompt = get_system_prompt(os.environ["LOCATION"])
+system_prompt_func = get_default_system_prompt_func(os.environ["LOCATION"])
 
 
 

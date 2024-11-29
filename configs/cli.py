@@ -1,5 +1,5 @@
 import os
-from .default import get_system_prompt
+from .default import get_default_system_prompt_func
 
 
 ## cli config
@@ -21,7 +21,7 @@ bemfa_topic = os.environ["BEMFA_TOPIC"]
 # used in kimi_profile
 kimi_profile_path = os.environ["KIMI_PROFILE_PATH"]
 
-system_prompt = get_system_prompt(os.environ["LOCATION"])
+system_prompt_func = get_default_system_prompt_func(os.environ["LOCATION"])
 
 
 

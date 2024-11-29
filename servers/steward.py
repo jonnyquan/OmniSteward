@@ -26,7 +26,7 @@ print(f"access_token: {config.access_token}")
 tmp_config_path = '.local/tmp_config.json'
 os.makedirs(os.path.dirname(tmp_config_path), exist_ok=True)
 with open(tmp_config_path, 'w', encoding='utf-8') as f:
-    json.dump(config.__dict__, f, indent=4, ensure_ascii=False)
+    f.write(config.dump2json())
 
 transcribe = OnlineASR(api_key=config.silicon_flow_api_key) # 转写器
 tool_manager = ToolManager(config) # 工具管理器
