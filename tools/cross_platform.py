@@ -1,3 +1,5 @@
+# 跨平台的工具
+# 这里只写跨平台的工具，不写windows或linux特有的工具，实现时请注意不要依赖windows或linux特有的模块或者命令
 import os
 import subprocess
 import requests
@@ -8,6 +10,7 @@ from selenium.webdriver.common.by import By
 import time
 from utils.bemfa import BemfaTCPClient
 from tools.base import Tool, Config, ToolResult
+import zipfile
 
 class MihomeControl(Tool):
     '''
@@ -351,10 +354,35 @@ class ListDir(Tool):
     def __call__(self, dir: str):
         return os.listdir(dir)
 
+class ZipDir(Tool):
+    name = "zip_dir"
+    description = "压缩文件夹"
+    parameters = {
+        "folder": {
+            "type": "string",
+            "description": "文件夹路径",
+        },
+        "zip_file": {
+            "type": "string",
+            "description": "压缩文件路径",
+        }
+    }
+    
+    def __call__(self, folder: str, zip_file: str):
+        zip_file = os.path.abspath(zip_file).replace('\\', '/')
+        folder = os.path.abspath(folder).replace('\\', '/')
+        if not os.path.exists(folder):
+            return f"文件夹不存在: {folder}"
+        # 使用python的zipfile模块来压缩文件夹
+        with zipfile.ZipFile(zip_file, 'w') as zipf:
+            for root, dirs, files in os.walk(folder):
+                for file in files:
+                    zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), folder))
+        return "压缩成功"
 
 class PrepareDownload(Tool):
     name = "prepare_download"
-    description = "提供文件供用户下载"
+    description = "提供文件供用户下载，请注意，这个只能下载文件，如果需要下载文件夹，请先压缩文件夹"
     parameters = {
         "file": {
             "type": "string",

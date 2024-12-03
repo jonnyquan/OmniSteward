@@ -32,9 +32,11 @@ tool_names = [
     'bemfa_control',
     'write_file',
     'read_file',
+    'list_dir',
+    'zip_dir',
     'cmd',
     'ask_kimi',
     'browser',
-    'everything',
+    'enhanced_everything',
     'timer',
 ]

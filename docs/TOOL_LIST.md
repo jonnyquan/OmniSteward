@@ -12,6 +12,8 @@
 - `browser`: 打开网页
 - `cmd`: 执行命令行命令
 - `write_file`: 写入文件
+- `read_file`: 读取文件
+- `zip_dir`: 压缩文件夹
 - `prepare_download`: 准备下载文件, 返回文件下载链接
 - `list_dir`: 列出文件夹内容
 - `enhanced_everything`: 增强版everything工具，支持自然语言检索

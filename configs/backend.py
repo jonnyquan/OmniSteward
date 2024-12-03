@@ -34,10 +34,11 @@ tool_names = [
     'write_file',
     'read_file',
     'list_dir',
+    'zip_dir',
     'cmd',
     'ask_kimi',
     'browser',
     'enhanced_everything',
     'timer',
-    'prepare_download'
+    'prepare_download',
 ]
