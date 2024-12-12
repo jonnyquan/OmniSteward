@@ -228,5 +228,9 @@ def download_api():
     return send_file(file_path, as_attachment=True)
 
 
+@app.route('/api/models', methods=['GET'])
+def models_api():
+    return jsonify(config.model_list)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=config.port, debug=args.debug)

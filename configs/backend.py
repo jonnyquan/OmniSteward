@@ -1,6 +1,6 @@
 import os
 import uuid
-from .default import get_default_system_prompt_func
+from .default import get_default_system_prompt_func, get_model_list
 
 # backend config
 frontend_url = "http://localhost:3000" # 前端服务器地址
@@ -10,7 +10,11 @@ access_token = str(uuid.uuid4()) # 用于验证用户身份，确保不会被外
 # steward config
 openai_api_base = os.environ["OPENAI_API_BASE"] # 查看docs/PLATFORM.md获取更多信息
 openai_api_key = os.environ["OPENAI_API_KEY"]
+
+model_list = get_model_list(openai_api_base) # 获取模型列表
 model = os.getenv("LLM_MODEL", "Qwen2.5-7B-Instruct") # 选用的大语言模型，这只是一个默认值，实际要看前端传回来的 
+
+assert model in [m["id"] for m in model_list], f"model {model} not found in {model_list}"
 
 # tool config
 silicon_flow_api_key = os.environ["SILICON_FLOW_API_KEY"] # 用于discover_program(文本重排序), 和语音转写

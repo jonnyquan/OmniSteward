@@ -7,9 +7,9 @@ vad_server_url="tcp://127.0.0.1:4242"
 
 
 # steward config
-openai_api_base = 'https://api.siliconflow.cn/v1' 
-openai_api_key = os.environ["SILICON_FLOW_API_KEY"] # 在这里我也用的是硅基流动的API
-model = "Qwen/Qwen2.5-7B-Instruct" # 选用的大语言模型
+openai_api_base = os.environ["OPENAI_API_BASE"]
+openai_api_key = os.environ["OPENAI_API_KEY"] 
+model = os.environ["LLM_MODEL"] # 选用的大语言模型
 
 # tool config
 silicon_flow_api_key = os.environ["SILICON_FLOW_API_KEY"] # 用于discover_program(文本重排序), 和语音转写

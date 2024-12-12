@@ -37,3 +37,25 @@ default_config = {
     "openai_api_key": None,
     "max_tokens": 1024,
 }
+
+api_base2models = {
+    "https://api.siliconflow.cn/v1": [
+        { "id": 'Qwen/Qwen2.5-7B-Instruct', "name": 'Qwen2.5-7B' },
+        { "id": 'Qwen/Qwen2.5-14B-Instruct', "name": 'Qwen2.5-14B' },
+        { "id": 'Qwen/Qwen2.5-32B-Instruct', "name": 'Qwen2.5-32B' },
+        { "id": 'Qwen/Qwen2.5-72B-Instruct', "name": 'Qwen2.5-72B' },
+    ],
+    "https://api.stepfun.com/v1": [
+        { "id": "step-1-8k", "name": "step-1-8k" },
+        { "id": "step-1-32k", "name": "step-1-32k" },
+        { "id": "step-1v-8k", "name": "step-1v-8k" },
+        { "id": "step-1v-32k", "name": "step-1v-32k" },
+        { "id": "step-1-128k", "name": "step-1-128k" },
+        { "id": "step-1-256k", "name": "step-1-256k" },
+        # step2 does not support tool calling yet
+    ],
+}
+
+def get_model_list(api_base):
+    return api_base2models[api_base]
+
