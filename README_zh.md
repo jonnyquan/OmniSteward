@@ -25,9 +25,9 @@
 - 🎤 语音识别与交互
 - 🏠 智能家居控制（巴法云设备）
 - 💻 电脑程序管理（启动/关闭程序）
-- 🔍 在线信息检索（通过Kimi AI）
+- 🔍 在线信息检索（通过阶跃星辰开放平台自带的[step_web_search](https://platform.stepfun.com/docs/guide/web_search)工具/Kimi AI）
 - ⌨️ 命令行操作
-
+- 📂 文件管理（文件检索/读写文件/压缩文件夹/列出文件夹内容）
 
 ## 系统要求
 
@@ -51,14 +51,21 @@ pip install -r requirements.txt
 ## 环境变量配置
 参见[examples/env.cmd](examples/env.cmd)文件
 ```
-SILICON_FLOW_API_KEY=your_api_key   # Silicon Flow API密钥，提供ASR, ReRank, LLM inference服务
+OPENAI_API_BASE=your_api_base # OpenAI格式API基础URL
+OPENAI_API_KEY=your_api_key   # OpenAI格式API密钥
+SILICON_FLOW_API_KEY=your_api_key   # Silicon Flow API密钥，用于ASR, ReRank, 获取方式参见[大语言模型平台](docs/PLATFORM.md)
 BEMFA_UID=your_bemfa_uid            # 巴法云平台UID（可选，用于巴法智能家居控制）
 BEMFA_TOPIC=your_bemfa_topic        # 巴法云平台Topic（可选，用于巴法智能家居控制）
 KIMI_PROFILE_PATH=path_to_chrome_profile    # Chrome用户数据目录（可选，用于Kimi AI功能，不填则使用默认路径）
 LOCATION=your_location                     # 你的地理位置（可选，用于系统提示词）
+LLM_MODEL=your_llm_model                   # 使用的LLM模型，可选，默认使用Qwen2.5-7B-Instruct
 ```
-参考链接:
-- [Silicon Flow 官网](https://siliconflow.cn/zh-cn/siliconcloud)
+
+获取OPENAI格式的API密钥和API基础URL参见[大语言模型平台](docs/PLATFORM.md)
+
+其他参考链接:
+- [阶跃星辰开放平台](https://platform.stepfun.com/)
+- [Silicon Flow官网](https://siliconflow.cn/zh-cn/siliconcloud)
 - [巴法云 官网](https://bemfa.com/)
 - [Kimi AI 官网](https://kimi.moonshot.cn/)
 
@@ -152,6 +159,10 @@ python -m servers.steward --config configs/backend.py
 ## 贡献
 
 目前此项目主要由[ElliottZheng](https://github.com/ElliottZheng)维护，欢迎提交Issue和Pull Request！
+
+## 感谢
+
+感谢[阶跃星辰开放平台【繁星计划】](https://wvixbzgc0u7.feishu.cn/wiki/XaMYwpqA1iI5rnkavDbcY9Jtnhd)对本项目的支持。
 
 ## 许可证
 

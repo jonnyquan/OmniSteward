@@ -72,9 +72,9 @@ class BemfaControl(Tool):
         return "执行成功"
 
 
-
-class WebSearch(Tool):
-    name = "web_search"
+# 这个目前不能用
+class BaiduWebSearch(Tool):
+    name = "baidu_web_search"
     description = "使用百度搜索引擎搜索信息并总结"
     parameters = {
         "query": {
@@ -124,7 +124,18 @@ class WebSearch(Tool):
         print(f"总结 {query} 成功")
         return response.choices[0].message.content
 
+class StepWebSearch(Tool):
+    # https://platform.stepfun.com/docs/guide/web_search
+    name = "step_web_search"
+    description = "使用stepfun平台进行网络搜索"
 
+    def json(self): # 覆盖原本的json方法，因为这是一个特殊工具
+        return {
+            "type": "web_search",# 固定值
+            "function": {
+                "description": "这个web_search用来搜索互联网的信息"# 描述什么样的信息需要大模型进行搜索。
+            }
+        }
 
 
 class WriteFileTool(Tool):

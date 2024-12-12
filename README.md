@@ -22,8 +22,9 @@ This is an AI-powered steward system based on large language models that can int
 - 🎤 Voice recognition and interaction
 - 🏠 Smart home control (Bemfa devices)
 - 💻 Computer program management (start/stop programs)
-- 🔍 Online information retrieval (via Kimi AI)
+- 🔍 Online information retrieval (via [Stepfun Web Search](https://platform.stepfun.com/docs/guide/web_search) or [Kimi AI](https://kimi.moonshot.cn/))
 - ⌨️ Command line operations
+- 📂 File management (file search/read/write/compress/list directory)
 
 ## Demo Video
 
@@ -52,13 +53,20 @@ pip install -r requirements.txt
 ## Environment Variables Configuration
 See [examples/env.cmd](examples/env.cmd) file
 ```
-SILICON_FLOW_API_KEY=your_api_key   # Silicon Flow API key for ASR, ReRank, LLM inference services
+OPENAI_API_BASE=your_api_base # OpenAI format API base URL
+OPENAI_API_KEY=your_api_key   # OpenAI format API key
+SILICON_FLOW_API_KEY=your_api_key   # Silicon Flow API key for ASR, Rerank, see [LLM Platforms](docs/PLATFORM.md)
 BEMFA_UID=your_bemfa_uid            # Bemfa platform UID (optional, for smart home control)
 BEMFA_TOPIC=your_bemfa_topic        # Bemfa platform Topic (optional, for smart home control)
 KIMI_PROFILE_PATH=path_to_chrome_profile    # Chrome user data directory (optional, for Kimi AI, uses default path if not set)
 LOCATION=your_location                     # Your geographic location (optional, for system prompts)
+LLM_MODEL=your_llm_model                   # LLM model to use, optional, defaults to Qwen2.5-7B-Instruct
 ```
+
+For obtaining OpenAI format API key and base URL, see [LLM Platforms](docs/PLATFORM.md)
+
 Reference links:
+- [Stepfun Platform](https://platform.stepfun.com/)
 - [Silicon Flow Official](https://siliconflow.cn/zh-cn/siliconcloud)
 - [Bemfa Official](https://bemfa.com/)
 - [Kimi AI Official](https://kimi.moonshot.cn/)
@@ -149,6 +157,11 @@ See [TOOL_LIST.md](docs/TOOL_LIST.md)
 ## Contributing
 
 Currently this project is maintained by [ElliottZheng](https://github.com/ElliottZheng), welcome to submit issues and pull requests!
+
+
+## Thanks
+
+Thanks to [Stepfun Stars Program](https://wvixbzgc0u7.feishu.cn/wiki/XaMYwpqA1iI5rnkavDbcY9Jtnhd) for supporting this project.
 
 
 ## License

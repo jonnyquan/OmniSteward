@@ -9,6 +9,7 @@
 - `bemfa_control`: 巴法云平台设备控制
 - `web_search`: 百度搜索信息查询
 - `ask_kimi`: 通过Kimi AI助手查询信息, 首次使用需要在弹出的浏览器登录Kimi，然后关闭浏览器
+- `step_web_search`: [使用stepfun的web搜索工具](https://platform.stepfun.com/docs/guide/web_search)，支持自然语言检索, 仅在使用step系列模型时可用
 - `browser`: 打开网页
 - `cmd`: 执行命令行命令
 - `write_file`: 写入文件
@@ -16,7 +17,7 @@
 - `zip_dir`: 压缩文件夹
 - `prepare_download`: 准备下载文件, 返回文件下载链接
 - `list_dir`: 列出文件夹内容
-- `enhanced_everything`: 增强版everything工具，支持自然语言检索
+- `enhanced_everything`: 增强版everything工具，支持使用自然语言检索
 
 ## 指定使用哪些工具
 

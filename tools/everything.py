@@ -65,25 +65,26 @@ class Everything(Tool):
     
 # https://github.com/elliottzheng/everytools
 abstract_everything_description = """
-使用everything检索文件, 参数有两个:
+使用everything检索文件, 可能的参数有三个:
 1. search_func: 所使用的检索函数
 2. keywords: 检索关键词
+3. path: 检索路径，注意有些函数可以指定，有些不能
 
 如果你不知道待检索的文件类型, 你可以使用以下函数:
-- search: 检索文件
-- search_folder: 搜索文件夹
+- search(keywords): 检索文件
+- search_folder(keywords): 搜索文件夹
 
-如果想检索特定类型的文件, 你可以使用以下函数:
-- search_audio: 搜索音频文件
-- search_video: 搜索视频文件
-- search_pic: 搜索图片文件
-- search_doc: 搜索文档文件
-- search_exe: 搜索可执行文件
-- search_zip: 搜索压缩包
-- search_ext: 搜索指定扩展名的文件
+如果想检索特定类型的文件, 但是不知道路径，你可以使用以下函数:
+- search_audio(keywords): 搜索音频文件
+- search_video(keywords): 搜索视频文件
+- search_pic(keywords): 搜索图片文件
+- search_doc(keywords): 搜索文档文件
+- search_exe(keywords): 搜索可执行文件
+- search_zip(keywords): 搜索压缩包
+- search_ext(keywords): 搜索指定扩展名的文件
 
 如果想在指定文件夹下搜索文件, 你可以使用以下函数:
-- search_in_located: 搜索指定文件夹下的文件
+- search_in_located(self, path, keywords): 在指定文件夹下搜索文件
 
 
 """
@@ -99,12 +100,19 @@ class InternalEverything(Everything):
         "keywords": {
             "type": "string",
             "description": "检索关键词",
+        },
+        "path": {
+            "type": "string",
+            "description": "检索路径",
         }
     }
     
-    def __call__(self, search_func: str, keywords: str):
-        print(f"DEBUG - 调用内部检索函数: {search_func}, 关键词: {keywords}")
-        getattr(self.es, search_func)(keywords) # 调用检索函数
+    def __call__(self, search_func: str, keywords: str, path: str = None):
+        print(f"DEBUG - 调用内部检索函数: {search_func}, 关键词: {keywords}, 路径: {path}")
+        if path is not None:
+            getattr(self.es, search_func)(keywords=keywords, path=path) # 调用检索函数
+        else:
+            getattr(self.es, search_func)(keywords=keywords) # 调用检索函数
         result_df = self.es.results()
         files = []
         for index, row in result_df.iterrows():
@@ -116,10 +124,22 @@ class InternalEverything(Everything):
     
 
 
+def get_desktop_path():
+    return os.path.expanduser('~') + r'\Desktop'
+
+desktop_path = get_desktop_path().replace('\\', '/')
+documents_path = os.path.join(os.path.expanduser('~'), 'Documents').replace('\\', '/')
+username = os.getlogin()
 
 everything_system_prompt = """
 你是一个文件检索专家，你的任务是根据用户的描述，从计算机中检索出最相关的文件或文件夹。
+以下是一些可能用到的信息:
+用户名: {username}
+桌面路径: {desktop_path}
+文档路径: {documents_path}
+
 """
+everything_system_prompt = everything_system_prompt.format(username=username, desktop_path=desktop_path, documents_path=documents_path)
 
 class EnhancedEverything(Tool):
     '''

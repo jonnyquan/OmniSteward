@@ -88,10 +88,14 @@ class OmniSteward:
 
         for i in range(self.max_rounds):
             start = time.time()
+            kwargs = {}
+            if "step-" in self.model_name: 
+                kwargs['tool_choice'] = "auto"
             response = self.client.chat.completions.create(
                 model=self.model_name,
                 messages=messages,
                 tools=self.tools_json,
+                tool_choice="auto",
                 temperature=self.config.get("temperature", 0.1),
                 top_p=self.config.get("top_p", 0.95),
                 max_tokens=self.config.get("max_tokens", 512),
@@ -99,6 +103,7 @@ class OmniSteward:
                 "repetition_penalty": 1.05,
                 }
             )
+            print(response)
             end = time.time()
             yield StewardOutput("debug", f"耗时: {end - start:.2f}秒")
 
@@ -120,6 +125,11 @@ class OmniSteward:
                 break
 
             for tool_call in tool_calls:
+                tool_type = tool_call.get("type")
+                if tool_type == "web_search": # 仅在step系列模型中支持step_web_search工具
+                    yield StewardOutput("debug", f"step_web_search is called")
+                    continue
+
                 fn_call = tool_call.get("function")
                 if fn_call:
                     fn_name = fn_call["name"]
