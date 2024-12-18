@@ -1,8 +1,7 @@
 from everytools import EveryTools
-from steward_utils import OmniTool, Config
+from steward_utils import OmniTool, Config, get_fn_args
 import os
 from openai import OpenAI
-from .utils import get_fn_args
 
 # pip install git+https://github.com/elliottzheng/everytools.git
 

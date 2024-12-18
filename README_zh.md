@@ -5,13 +5,16 @@
 
 **注意：本项目仍在积极开发中，部分功能可能不稳定，文档内容也在不断更新中**
 
-这是一个基于大语言模型的全能管家系统，可以通过语音或文字与用户交互，帮助控制智能家居设备和电脑程序。
+这是一个基于LLM Agent的全能管家系统，可以通过语音或文字与用户交互，帮助控制智能家居设备和电脑程序。
 
 ## 演示视频
 ![多轮对话演示GIF](./assets/multi-round.gif)
 
 我们准备了一系列演示视频，请观看[演示视频](https://youtube.com/playlist?list=PLB-gnx_vrV9nFWHbZbxfktOPmHv7llkQZ&si=ZcZVOO6mfteR120a)了解系统的主要功能和使用方法。
 
+## 新闻
+
+- 2024-12-18: 支持HomeAssistant，可以控制HomeAssistant/米家（通过HomeAssistant）智能家居设备，请查看[omni-ha](https://github.com/OmniSteward/omni-ha)项目
 
 ## 亮点
 
@@ -23,11 +26,12 @@
 ## 主要功能
 
 - 🎤 语音识别与交互
-- 🏠 智能家居控制（巴法云设备）
+- 🏠 智能家居控制（HomeAssistant/巴法云设备/米家（通过HomeAssistant））
 - 💻 电脑程序管理（启动/关闭程序）
 - 🔍 在线信息检索（通过阶跃星辰开放平台自带的[step_web_search](https://platform.stepfun.com/docs/guide/web_search)工具/Kimi AI）
 - ⌨️ 命令行操作
 - 📂 文件管理（文件检索/读写文件/压缩文件夹/列出文件夹内容）
+
 
 ## 系统要求
 
@@ -54,12 +58,12 @@ pip install -r requirements.txt
 OPENAI_API_BASE=your_api_base # OpenAI格式API基础URL
 OPENAI_API_KEY=your_api_key   # OpenAI格式API密钥
 SILICON_FLOW_API_KEY=your_api_key   # Silicon Flow API密钥，用于ASR, ReRank, 获取方式参见[大语言模型平台](docs/PLATFORM.md)
-BEMFA_UID=your_bemfa_uid            # 巴法云平台UID（可选，用于巴法智能家居控制）
-BEMFA_TOPIC=your_bemfa_topic        # 巴法云平台Topic（可选，用于巴法智能家居控制）
 KIMI_PROFILE_PATH=path_to_chrome_profile    # Chrome用户数据目录（可选，用于Kimi AI功能，不填则使用默认路径）
 LOCATION=your_location                     # 你的地理位置（可选，用于系统提示词）
 LLM_MODEL=your_llm_model                   # 使用的LLM模型，可选，默认使用Qwen2.5-7B-Instruct
 ```
+
+不同工具还可能需要其他配置，请参见[工具列表](docs/TOOL_LIST.md)
 
 获取OPENAI格式的API密钥和API基础URL参见[大语言模型平台](docs/PLATFORM.md)
 
@@ -110,10 +114,12 @@ python -m core.cli --query "打印 你好" --config configs/cli_custom_tool.py
 ```
 这个例子在[configs/cli_custom_tool.py](configs/cli_custom_tool.py)中添加了一个简单的打印工具，可以打印任意字符串, 查看该文件以了解如何简单地添加自定义工具
 
+更多自定义工具的例子参见[steward-utils](https://github.com/OmniSteward/steward-utils)项目
+
 
 ### Web模式
 
-- 需要搭配前端WebUI使用，前端项目叫[OmniSteward-Frontend](https://github.com/OmniSteward/OmniSteward-Frontend)。
+- 需要搭配前端WebUI使用，前端项目为[OmniSteward-Frontend](https://github.com/OmniSteward/OmniSteward-Frontend)。
 - 需要配置环境变量，尤其是Silicon Flow API密钥，否则无法使用
 - 前端WebUI应在`http://localhost:3000`运行，当后端服务启动后，后端会将请求转发到前端
 - 后端服务应在`http://localhost:8000`运行
@@ -138,17 +144,10 @@ python -m servers.steward --config configs/backend.py
 手机上也可以使用Chrome或者Edge浏览器，打开`http://ip:port`，即可开始使用，也需要如上设置。
 
 
-## 可用工具
+## 可用工具和自定义工具
 
 详见[TOOL_LIST.md](docs/TOOL_LIST.md)
 
-## 技术栈
-
-- 语音处理：pyaudio, sounddevice
-- AI模型：Qwen2.5, BGE Reranker, Silero VAD
-- Web服务：Flask, zerorpc
-- 浏览器自动化：Selenium
-- 其他：requests, beautifulsoup4
 
 ## 注意事项
 

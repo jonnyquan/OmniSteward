@@ -12,32 +12,6 @@ from utils.bemfa import BemfaTCPClient
 from steward_utils import OmniTool, OmniToolResult, Config
 import zipfile
 
-class MihomeControl(OmniTool):
-    '''
-    TODO: 小爱同学控制智能家居, 目前实际的功能还没有实现，只是占位
-    '''
-    name = "mihome_control"
-    description = "通过小爱同学控制智能家居设备, 默认所有智能家居设备都通过它控制"
-    parameters = {
-        "command": {
-            "type": "string",
-            "description": "控制命令，例如：小爱同学，打开空调，温度设置为26度",
-        }
-    }
-    
-    def __call__(self, command: str):
-        """
-        通过小爱同学控制智能家居
-        
-        Args:
-            command: 控制命令，例如"小爱同学，打开空调，温度设置为26度"
-            
-        Returns:
-            执行状态信息
-        """
-        print(f"执行命令: {command}")
-        return "执行成功"
-
 
 class BemfaControl(OmniTool):
     name = "bemfa_control"

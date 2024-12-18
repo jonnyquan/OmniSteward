@@ -20,21 +20,22 @@ assert model in [m["id"] for m in model_list], f"model {model} not found in {mod
 silicon_flow_api_key = os.environ["SILICON_FLOW_API_KEY"] # 用于discover_program(文本重排序), 和语音转写
 
 # used in bemfa_control
-bemfa_uid = os.environ["BEMFA_UID"]
-bemfa_topic = os.environ["BEMFA_TOPIC"]
+# bemfa_uid = os.environ["BEMFA_UID"]
+# bemfa_topic = os.environ["BEMFA_TOPIC"]
 
 # used in kimi_profile
 kimi_profile_path = os.getenv("KIMI_PROFILE_PATH", None)
 
 system_prompt_func = get_default_system_prompt_func(os.environ["LOCATION"])
 
-
+# used in omni_ha(homeassistant)
+ha_url = os.environ["HA_URL"]
+ha_token = os.environ["HA_TOKEN"]
 
 tool_names = [
     'discover_program',
     'launch_program',
-    'mihome_control',
-    'bemfa_control',
+    # 'bemfa_control',
     'write_file',
     'read_file',
     'list_dir',
@@ -45,6 +46,7 @@ tool_names = [
     'enhanced_everything',
     'timer',
     'prepare_download',
+    'omni_ha.HomeAssistant', # https://github.com/OmniSteward/omni-ha
     # 'steward_utils.tools.example.ListAllTools' # 未导入的工具，可以直接写全路径，会自动导入
     # 'step_web_search', # 仅在step系列模型中支持
 ]

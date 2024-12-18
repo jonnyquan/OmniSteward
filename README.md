@@ -10,6 +10,10 @@ This is an AI-powered steward system based on large language models that can int
 
 ![image](./assets/multi-round.gif)
 
+## News
+
+- 2024-12-18: Added support for HomeAssistant, can now control HomeAssistant/Mi Home devices, check [omni-ha](https://github.com/OmniSteward/omni-ha) for more details
+
 ## Highlights
 
 - Supports multi-turn dialogue for continuous user interaction
@@ -20,7 +24,7 @@ This is an AI-powered steward system based on large language models that can int
 ## Main Features
 
 - 🎤 Voice recognition and interaction
-- 🏠 Smart home control (Bemfa devices)
+- 🏠 Smart home control (HomeAssistant/Bemfa devices/Mi Home devices)
 - 💻 Computer program management (start/stop programs)
 - 🔍 Online information retrieval (via [Stepfun Web Search](https://platform.stepfun.com/docs/guide/web_search) or [Kimi AI](https://kimi.moonshot.cn/))
 - ⌨️ Command line operations
@@ -135,17 +139,9 @@ Note: For external network access, since Chrome/Edge blocks microphone under HTT
 
 Mobile phones can also use Chrome or Edge browser, open `http://ip:port` to start using, requires same settings as above.
 
-## Available Tools
+## Available Tools and Customization
 
 See [TOOL_LIST.md](docs/TOOL_LIST.md)
-
-## Tech Stack
-
-- Audio Processing: pyaudio, sounddevice
-- AI Models: Qwen2.5, BGE Reranker, Silero VAD
-- Web Services: Flask, zerorpc
-- Browser Automation: Selenium
-- Others: requests, beautifulsoup4
 
 ## Notes
 
@@ -169,3 +165,7 @@ Thanks to [Stepfun Stars Program](https://wvixbzgc0u7.feishu.cn/wiki/XaMYwpqA1iI
 [MIT License](LICENSE)
 
 Copyright (c) 2024-present [ElliottZheng](https://github.com/ElliottZheng)
+
+## More Custom Tool Examples
+
+See [steward-utils](https://github.com/OmniSteward/steward-utils) project for more custom tool examples.
