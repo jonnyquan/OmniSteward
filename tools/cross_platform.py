@@ -9,10 +9,10 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 import time
 from utils.bemfa import BemfaTCPClient
-from tools.base import Tool, Config, ToolResult
+from steward_utils import OmniTool, OmniToolResult, Config
 import zipfile
 
-class MihomeControl(Tool):
+class MihomeControl(OmniTool):
     '''
     TODO: 小爱同学控制智能家居, 目前实际的功能还没有实现，只是占位
     '''
@@ -39,7 +39,7 @@ class MihomeControl(Tool):
         return "执行成功"
 
 
-class BemfaControl(Tool):
+class BemfaControl(OmniTool):
     name = "bemfa_control"
     description = "通过Bemfa平台控制智能家居设备, 但只有一个设备，叫鱼缸灯"
     parameters = {
@@ -73,7 +73,7 @@ class BemfaControl(Tool):
 
 
 # 这个目前不能用
-class BaiduWebSearch(Tool):
+class BaiduWebSearch(OmniTool):
     name = "baidu_web_search"
     description = "使用百度搜索引擎搜索信息并总结"
     parameters = {
@@ -124,7 +124,7 @@ class BaiduWebSearch(Tool):
         print(f"总结 {query} 成功")
         return response.choices[0].message.content
 
-class StepWebSearch(Tool):
+class StepWebSearch(OmniTool):
     # https://platform.stepfun.com/docs/guide/web_search
     name = "step_web_search"
     description = "使用stepfun平台进行网络搜索"
@@ -138,7 +138,7 @@ class StepWebSearch(Tool):
         }
 
 
-class WriteFileTool(Tool):
+class WriteFileTool(OmniTool):
     name = "write_file"
     description = "写入文件内容"
     parameters = {
@@ -170,7 +170,7 @@ class WriteFileTool(Tool):
             return f"写入失败: {str(e)}"
 
 
-class ReadFileTool(Tool):
+class ReadFileTool(OmniTool):
     name = "read_file"
     description = "读取文件内容"
     parameters = {
@@ -202,7 +202,7 @@ class ReadFileTool(Tool):
         except Exception as e:
             return f"读取失败: {str(e)}"
 
-class CMDTool(Tool):
+class CMDTool(OmniTool):
     name = "cmd"
     description = "windows command prompt，能够完成对计算机的操控，一些git命令也可以使用它, 也可以通过它来执行命令以关闭某些程序"
     parameters = {
@@ -251,7 +251,7 @@ def wait_until_finished(driver, timeout=120):
     print('KIMI AI助手回答结束')
 
 
-class AskKimi(Tool):
+class AskKimi(OmniTool):
     name = "ask_kimi"
     description = "使用强大的Kimi AI助手进行在线检索和信息查询，他可以回答各种问题，并提供详细的解释, 有不懂的问题都可以问他，只要是在线可以查询到的信息都可以问他"
     parameters = {
@@ -352,7 +352,7 @@ class AskKimi(Tool):
                 self.create_driver(force=True)
         return "查询失败"
 
-class ListDir(Tool):
+class ListDir(OmniTool):
     name = "list_dir"
     description = "列出文件夹内容"
     parameters = {
@@ -365,7 +365,7 @@ class ListDir(Tool):
     def __call__(self, dir: str):
         return os.listdir(dir)
 
-class ZipDir(Tool):
+class ZipDir(OmniTool):
     name = "zip_dir"
     description = "压缩文件夹"
     parameters = {
@@ -391,7 +391,7 @@ class ZipDir(Tool):
                     zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), folder))
         return "压缩成功"
 
-class PrepareDownload(Tool):
+class PrepareDownload(OmniTool):
     name = "prepare_download"
     description = "提供文件供用户下载，请注意，这个只能下载文件，如果需要下载文件夹，请先压缩文件夹"
     parameters = {
@@ -423,9 +423,9 @@ class PrepareDownload(Tool):
         # ask server to prepare file
         response = requests.post(self.prepare_file_url, json={'file': file, **self.kwargs})
         if response.status_code != 200:
-            return ToolResult(status='error', content=f"准备文件失败: {response.text}")
+            return OmniToolResult(status='error', content=f"准备文件失败: {response.text}")
         file_id = response.json()['file_id']
-        return ToolResult(status='success', content=f"准备文件成功，现在可以在网页上点击下载", action={
+        return OmniToolResult(status='success', content=f"准备文件成功，现在可以在网页上点击下载", action={
             'type': 'create_download',
             'url': f'/api/download?file_id={file_id}&access_token={self.access_token}',
             'file_name': os.path.basename(file),

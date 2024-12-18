@@ -1,5 +1,5 @@
 import requests
-from .base import ToolResult
+from steward_utils import OmniToolResult
 
 class RemoteToolManager:
     '''
@@ -28,7 +28,7 @@ class RemoteToolManager:
         response = requests.post(f"{self.tool_api_url}", json={"tool_name": tool_name, "tool_params": params, "action_type":"call", **self.kwargs})
         call_res = response.json()
         if isinstance(call_res, dict) and call_res.get("is_tool_result"):
-            return ToolResult(**call_res)
+            return OmniToolResult(**call_res)
         else:
             return call_res
     

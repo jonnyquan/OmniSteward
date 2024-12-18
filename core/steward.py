@@ -1,7 +1,7 @@
 import json
 from openai import OpenAI
 import time
-from tools import ToolManager, Config, ToolResult, get_fn_args
+from tools import ToolManager, Config, OmniToolResult, get_fn_args
 from core.task import RemoteToolManager
 
 class HistoryManager:
@@ -141,7 +141,7 @@ class OmniSteward:
 
                     tool_start = time.time()
                     fn_res = self.tool_manager.call(fn_name, fn_args)
-                    if isinstance(fn_res, ToolResult) and fn_res.action is not None:
+                    if isinstance(fn_res, OmniToolResult) and fn_res.action is not None:
                         yield StewardOutput("action", fn_res.action) # 创建一个新动作
                         fn_res = fn_res.content
 

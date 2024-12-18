@@ -1,14 +1,19 @@
-from .base import ToolMetaclass, Config
+from steward_utils import OmniToolMetaclass, Config, get_omni_tool_class
 
 class ToolManager:
     def __init__(self, config: Config):
         # filter tools by current os
-        tool_names = config.tool_names
-        self.name2fn = {name: ToolMetaclass.registered_tools[name](config) for name in tool_names if ToolMetaclass.registered_tools[name].is_supported()}
+        self.name2fn = {}
+        for name in config.tool_names:
+            updated_tool_name, tool_class = get_omni_tool_class(name)
+            if updated_tool_name != name:
+                print(f"INFO - 工具名已更新: {name} -> {updated_tool_name}")
+            if tool_class.is_supported():
+                self.name2fn[updated_tool_name] = tool_class(config)
+            else:
+                print(f"ERROR - 工具 {name} 当前系统环境不支持")
+            
         self.tool_names = list(self.name2fn.keys())
-        diff = set(tool_names) - set(self.tool_names)
-        if diff:
-            print(f"以下工具当前环境不支持: {diff}")
 
     def get_function(self, name):
         return self.name2fn[name]
@@ -24,12 +29,12 @@ class ToolManager:
 
     @staticmethod
     def get_all_tool_names():
-        return list(ToolMetaclass.registered_tools.keys())
+        return list(OmniToolMetaclass.registered_tools.keys())
     
 
     @staticmethod
     def get_all_supported_tool_names():
-        return [tool for tool in ToolMetaclass.registered_tools.values() if tool.is_supported()]
+        return [tool for tool in OmniToolMetaclass.registered_tools.values() if tool.is_supported()]
 
     
 

@@ -3,9 +3,9 @@ from utils.reranker import Reranker
 import os
 import subprocess
 import time
-from .base import Tool, Config
+from steward_utils import OmniTool, Config
 
-class DiscoverProgram(Tool):
+class DiscoverProgram(OmniTool):
     name = "discover_program"
     description = "根据用户描述，发现用户需要的程序, 供launch_program使用, 如果你认为用户需要打开电脑程序，则调用它来发现程序,关键词尽量用完整的程序名，快捷方式的名称可能和程序名不一致，你应该选择最可能的快捷方式"
     parameters = {
@@ -65,7 +65,7 @@ class DiscoverProgram(Tool):
 
 
 
-class LaunchProgram(Tool):
+class LaunchProgram(OmniTool):
     name = "launch_program"
     description = "启动程序，不要自己猜测程序路径，必须先调用discover_program以获取程序路径"
     parameters = {
@@ -106,7 +106,7 @@ class LaunchProgram(Tool):
 
 
 
-class BrowserTool(Tool):
+class BrowserTool(OmniTool):
     name = "browser"
     description = "使用浏览器打开指定网址"
     parameters = {

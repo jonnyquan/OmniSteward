@@ -45,5 +45,6 @@ tool_names = [
     'enhanced_everything',
     'timer',
     'prepare_download',
+    # 'steward_utils.tools.example.ListAllTools' # 未导入的工具，可以直接写全路径，会自动导入
     # 'step_web_search', # 仅在step系列模型中支持
 ]

@@ -1,23 +1,27 @@
-# Webæ¡†æ¶
+# Web¿ò¼Ü
 flask==3.0.2
 werkzeug==3.0.2
 
-# AIå’Œæœºå™¨å­¦ä¹ 
+# AIºÍ»úÆ÷Ñ§Ï°
 openai==1.52.2
 ollama==0.3.3
 
-# éŸ³é¢‘å¤„ç†
+# ÒôÆµ´¦Àí
 pyaudio==0.2.14
 sounddevice==0.5.1
 soundfile==0.12.1
 
-# ç½‘ç»œå’Œé€šä¿¡
+# ÍøÂçºÍÍ¨ĞÅ
 requests==2.31.0
 zerorpc==0.6.3
 
-# ç½‘é¡µå¤„ç†
+# ÍøÒ³´¦Àí
 beautifulsoup4==4.12.3
 selenium==4.26.1
 
-# å…¶ä»–å·¥å…·
+# ÆäËû¹¤¾ß
 numpy==1.26.4
+
+
+git+https://github.com/elliottzheng/everytools.git
+git+https://github.com/OmniSteward/steward-utils.git

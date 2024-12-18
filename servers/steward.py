@@ -4,8 +4,8 @@ from core.steward import OmniSteward, HistoryManager, get_generate, StewardOutpu
 from core.task import ScheduledTaskRunner
 from core.file import FileManager
 from utils.asr_client import OnlineASR
-from configs import load_and_merge_config, get_updated_config
-from tools import ToolManager, RemoteToolManager, ToolResult
+from configs import load_and_merge_config, get_updated_config, default_config
+from tools import ToolManager, RemoteToolManager, OmniToolResult
 import requests
 import time
 import json
@@ -18,7 +18,7 @@ parser.add_argument('--config', type=str, default='configs/backend.py')
 parser.add_argument('--debug', action='store_true', default=False)
 args = parser.parse_args()
 
-config = load_and_merge_config(args.config)
+config = load_and_merge_config(args.config, default_config)
 
 print(f"access_token: {config.access_token}")
 
@@ -187,7 +187,7 @@ def tool_api():
         tool_name = data.get('tool_name', '')
         tool_params = data.get('tool_params', {})
         tool_res = tool_manager.call(tool_name, tool_params)
-        if isinstance(tool_res, ToolResult):
+        if isinstance(tool_res, OmniToolResult):
             return jsonify(tool_res.to_dict())
         else:
             return jsonify(tool_res)

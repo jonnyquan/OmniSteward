@@ -1,9 +1,9 @@
 import os
-from .base import Tool
+from steward_utils import OmniTool
 from datetime import datetime
 import subprocess
 
-class Timer(Tool):
+class Timer(OmniTool):
     name = "timer"
     description = "在指定时间执行CMD命令（注意是CMD命令，不是tool调用）"
     parameters = {

@@ -1,7 +1,8 @@
 from everytools import EveryTools
-from .base import Tool, Config, get_fn_args
+from steward_utils import OmniTool, Config
 import os
 from openai import OpenAI
+from .utils import get_fn_args
 
 # pip install git+https://github.com/elliottzheng/everytools.git
 
@@ -28,7 +29,7 @@ def start_everything(everything_path: str):
 
 
 
-class Everything(Tool):
+class Everything(OmniTool):
     """
     使用everything搜索
     """
@@ -141,7 +142,7 @@ everything_system_prompt = """
 """
 everything_system_prompt = everything_system_prompt.format(username=username, desktop_path=desktop_path, documents_path=documents_path)
 
-class EnhancedEverything(Tool):
+class EnhancedEverything(OmniTool):
     '''
     使用自然语言增强检索， 这相当于是一个子Agent, 专门负责检索文件
     '''
