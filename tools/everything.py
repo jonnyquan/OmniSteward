@@ -1,5 +1,5 @@
 from everytools import EveryTools
-from steward_utils import OmniTool, Config, get_fn_args
+from steward_utils import OmniTool, OmniAgent, Config
 import os
 from openai import OpenAI
 
@@ -141,7 +141,7 @@ everything_system_prompt = """
 """
 everything_system_prompt = everything_system_prompt.format(username=username, desktop_path=desktop_path, documents_path=documents_path)
 
-class EnhancedEverything(OmniTool):
+class EnhancedEverything(OmniAgent):
     '''
     使用自然语言增强检索， 这相当于是一个子Agent, 专门负责检索文件
     '''
@@ -159,40 +159,12 @@ class EnhancedEverything(OmniTool):
         }
     }
     
-    def __init__(self, config: Config):
-        super().__init__(config)
-        self.client = OpenAI(
-            api_key=self.openai_api_key,
-            base_url=self.openai_api_base,
-        )
-        self.internal_everything = InternalEverything(config)
+    agent_api_key_sources = ['everything.openai_api_key','openai_api_key']
+    agent_base_url_sources = ['everything.openai_api_base','openai_api_base']
+    agent_model_sources = ['everything.model','model']
+    
+    def create_tools(self, config: Config):
+        return [InternalEverything(config)]
 
-        
-
-    def __call__(self, query):
-        response = self.client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": everything_system_prompt},
-                {"role": "user", "content": query},
-            ],
-            tools=[self.internal_everything.json()],
-        )
-        message = response.choices[0].message.model_dump()
-        content = message['content']
-        print(f"DEBUG - 自然语言增强检索: {message}")
-        tool_calls = message['tool_calls']
-        if tool_calls is None:
-            return '检索失败'
-        for tool_call in tool_calls:
-            fn_call = tool_call['function']
-            fn_name = fn_call['name']
-            if fn_name != 'internal_everything':
-                return '检索失败'
-            fn_args = get_fn_args(fn_call)
-            files = self.internal_everything(**fn_args)
-            return files
-            
-
-
-        
+    def get_system_prompt(self):
+        return everything_system_prompt

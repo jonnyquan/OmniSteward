@@ -1,6 +1,8 @@
 import os
 import uuid
-from .default import get_default_system_prompt_func, get_model_list
+from .default import get_default_system_prompt_func
+from .platforms import get_model_list
+from steward_utils import Config
 
 # backend config
 frontend_url = "http://localhost:3000" # 前端服务器地址
@@ -29,8 +31,10 @@ kimi_profile_path = os.getenv("KIMI_PROFILE_PATH", None)
 system_prompt_func = get_default_system_prompt_func(os.environ["LOCATION"])
 
 # used in omni_ha(homeassistant)
-ha_url = os.environ["HA_URL"]
-ha_token = os.environ["HA_TOKEN"]
+homeassistant = Config(
+    ha_url = os.environ["HA_URL"],
+    ha_token = os.environ["HA_TOKEN"]
+)
 
 tool_names = [
     'discover_program',
@@ -41,7 +45,7 @@ tool_names = [
     'list_dir',
     'zip_dir',
     'cmd',
-    'ask_kimi',
+    # 'ask_kimi',
     'browser',
     'enhanced_everything',
     'timer',

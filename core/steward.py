@@ -1,7 +1,7 @@
 import json
 from openai import OpenAI
 import time
-from tools import ToolManager, Config, OmniToolResult, get_fn_args
+from tools import ToolManager, Config, OmniToolResult, JsonFixer
 from core.task import RemoteToolManager
 
 class HistoryManager:
@@ -67,6 +67,7 @@ class OmniSteward:
         self.max_rounds = config.max_rounds
         self.openai_api_base = config.openai_api_base
         self.openai_api_key = config.openai_api_key
+        self.json_fixer = JsonFixer(config) # 修复JSON格式错误
         
         self.client = OpenAI(
             base_url=self.openai_api_base,
@@ -133,7 +134,7 @@ class OmniSteward:
                 fn_call = tool_call.get("function")
                 if fn_call:
                     fn_name = fn_call["name"]
-                    fn_args = get_fn_args(fn_call)
+                    fn_args = self.json_fixer.get_fn_args(fn_call)
                     if fn_args is None:
                         yield StewardOutput("error", f"工具调用参数解析失败: {fn_call}")
                         break
