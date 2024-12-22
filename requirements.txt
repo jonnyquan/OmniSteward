@@ -1,25 +1,26 @@
-# Web框架
+# Web Framework
 flask==3.0.2
 werkzeug==3.0.2
+eventlet==0.38.2
 
-# AI和机器学习
+# AI and Machine Learning
 openai==1.52.2
 ollama==0.3.3
 
-# 音频处理
+# Audio Processing
 pyaudio==0.2.14
 sounddevice==0.5.1
 soundfile==0.12.1
 
-# 网络和通信
+# Network and Communication
 requests==2.31.0
 zerorpc==0.6.3
 
-# 网页处理
+# Web Processing
 beautifulsoup4==4.12.3
 selenium==4.26.1
 
-# 其他工具
+# Other Tools
 numpy==1.26.4
 
 

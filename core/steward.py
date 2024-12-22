@@ -159,9 +159,9 @@ class OmniSteward:
 
 
 
-def get_generate(sutando: OmniSteward, query: str, history: list[dict]):
+def get_generate(steward: OmniSteward, query: str, history: list[dict]):
     def generate():
-        for output in sutando.chat(query, history):
+        for output in steward.chat(query, history):
             output_type = output.type
             if output_type == "history":
                 yield output
