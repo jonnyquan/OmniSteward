@@ -141,7 +141,12 @@ class OmniSteward:
                     yield StewardOutput("debug", f"正在调用工具: {fn_name}, 参数: {fn_args}")
 
                     tool_start = time.time()
-                    fn_res = self.tool_manager.call(fn_name, fn_args)
+                    try:
+                        fn_res = self.tool_manager.call(fn_name, fn_args)
+                        print(f"DEBUG - 工具调用结果: {fn_res}")
+                    except Exception as e:
+                        yield StewardOutput("error", f"工具调用失败: {e}")
+                        break
                     if isinstance(fn_res, OmniToolResult) and fn_res.action is not None:
                         yield StewardOutput("action", fn_res.action) # 创建一个新动作
                         fn_res = fn_res.content

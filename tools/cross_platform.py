@@ -395,7 +395,7 @@ class PrepareDownload(OmniTool):
         """
         file = os.path.abspath(file).replace('\\', '/')
         # ask server to prepare file
-        response = requests.post(self.prepare_file_url, json={'file': file, **self.kwargs})
+        response = requests.post(self.prepare_file_url, json={'file': file, **self.kwargs}, timeout=10)
         if response.status_code != 200:
             return OmniToolResult(status='error', content=f"准备文件失败: {response.text}")
         file_id = response.json()['file_id']

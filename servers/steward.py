@@ -1,3 +1,7 @@
+from gevent import monkey
+monkey.patch_all()
+import socket
+print(socket.gethostbyname('localhost'))
 from flask import Flask, request, jsonify, send_file
 from werkzeug.middleware.proxy_fix import ProxyFix
 from core.steward import OmniSteward, HistoryManager, StewardOutput
@@ -18,7 +22,6 @@ parser.add_argument('--debug', action='store_true', default=False)
 args = parser.parse_args()
 
 config = load_and_merge_config(args.config, default_config)
-
 print(f"access_token: {config.access_token}")
 
 
@@ -43,7 +46,7 @@ def verify_access_token(data):
 app = Flask(__name__)
 app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode='eventlet')
+socketio = SocketIO(app, async_mode='gevent') # 不要用eventlet, 那个玩意儿会导致dns解析出问题
 
 # 转发到前端服务器的函数
 @app.route('/', defaults={'path': ''})
@@ -155,22 +158,18 @@ def download_api():
 def models_api():
     return jsonify(config.model_list)
 
-@socketio.on('chat')
-def handle_chat(data):
-    query = data.get('query', '')
-    model = data.get('model', config.model)
-    history_id = data.get('history_id', None)
+def chat(query, model, history_id):
+    namespace = '/'
     print(f"DEBUG - 选择的模型: {model}")
     tmp_config = get_updated_config(config, model=model)
     steward = OmniSteward(tmp_config, tool_manager)
     if history_id is not None:
         history = history_manager.get(history_id)
         if history is None:
-            emit('error', {'error': f"历史记录不存在: {history_id}"})
+            socketio.emit('error', {'error': f"历史记录不存在: {history_id}"}, namespace=namespace)
             return
     else:
         history = []
-
     try:
         for output in steward.chat(query, history):
             assert isinstance(output, StewardOutput)
@@ -188,11 +187,19 @@ def handle_chat(data):
             timestamp_in_ms = int(time.time() * 1000)
             kwargs = {"send_time": timestamp_in_ms}
             message.update(kwargs)
-            emit('message', message)
+            socketio.emit('message', message, namespace=namespace)
             socketio.sleep(0)
     except Exception as e:
-        emit('error', {'error': str(e)})
+        socketio.emit('error', {'error': str(e)}, namespace=namespace)
 
+
+@socketio.on('chat')
+def handle_chat(data):
+    query = data.get('query', '')
+    model = data.get('model', config.model)
+    history_id = data.get('history_id', None)
+    
+    socketio.start_background_task(chat, query, model, history_id)
 
 
 if __name__ == '__main__':
