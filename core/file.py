@@ -1,3 +1,5 @@
+import os
+
 class FileManager:
     def __init__(self):
         self.id2path = {}
@@ -11,6 +13,7 @@ class FileManager:
         
     def add(self, file_path: str):
         file_id = int(self.index)
+        assert os.path.exists(file_path), f"文件不存在: {file_path}"
         if self.is_prepared(file_path):
             print(f"DEBUG - 文件已存在: {file_path}")
             return self.path2id[file_path]

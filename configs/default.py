@@ -22,6 +22,7 @@ def get_default_system_prompt_func(location=default_location):
             '1. 如果你想打开任何程序，必须先调用discover_program工具。',
             '2. 你的记忆力有限，你其实不知道某些网站的地址，某些文件的路径，某些程序的用法等，不要直接猜测，请先调用工具获取信息。',
             '3. 尽量不要询问我的意见，有疑问你就调用工具来解决。',
+            '4. 调用工具后的返回结果用户是可以看到的，所以你不需要重复告诉用户工具的返回结果。',
         ]
         notices = "\n".join(notices)
 

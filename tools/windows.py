@@ -63,7 +63,25 @@ class DiscoverProgram(OmniTool):
             program_list.append(name2path[name])
         return program_list
 
-
+def launch(path: str)->str:
+    path = path.replace('\\', '/')
+    if path.endswith('.lnk'):
+        command = f'"{path}"'
+    else:
+        command = f'start "" "{path}"'
+    p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    time.sleep(1)
+    if p.poll() is None:
+        return '启动成功'
+    elif p.returncode == 0: # 如果程序已经退出，且成功退出
+        return '启动成功'
+    else:
+        # 获取 stderr
+        err_str = p.stderr.read().decode('gbk')
+        if len(err_str)==0 and path.endswith('.lnk'):
+            return '启动成功'
+        else:
+            return f'启动失败: {err_str}'
 
 class LaunchProgram(OmniTool):
     name = "launch_program"
@@ -85,53 +103,58 @@ class LaunchProgram(OmniTool):
         Returns:
             启动状态信息
         """    
-        if program.endswith('.lnk'):
-            command = f'"{program}"'
-        else:
-            command = f'start "" "{program}"'
+        return launch(program)
         
-        # 使用Popen代替run，这样不会阻塞等待程序退出
-        p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        time.sleep(2)
-        if p.poll() is None:
-            return '启动成功'
-        elif p.returncode == 0: # 如果程序已经退出，且成功退出
-            return '启动成功'
-        else:
-            # 获取 stderr
-            stderr = p.stderr.read().decode('gbk')
-            return f'启动失败: {stderr}'
-        
-        
-
-
-
-class BrowserTool(OmniTool):
-    name = "browser"
-    description = "使用浏览器打开指定网址"
+class Start(OmniTool):
+    name = "start"
+    description = "打开文件，打开文件夹，打开网址"
     parameters = {
-        "url": {
-            "type": "string", 
-            "description": "要打开的网址",
+        "path": {
+            "type": "string",
+            "description": "文件路径或文件夹路径，或网址",
         }
     }
     support_os = ["windows"]
 
-    def __call__(self, url: str):
-        """使用默认浏览器打开指定网址
+    def __call__(self, path: str):
+        """打开文件，打开文件夹，打开网址
         
         Args:
-            url: 要打开的网址
+            path: 文件路径，文件夹路径，网址
             
         Returns:
             执行状态信息
         """
-        try:
-            os.system(f'start {url}')
-            return "网页打开成功"
-        except Exception as e:
-            return f"打开失败: {str(e)}"
+        return launch(path)
+
+
+# class BrowserTool(OmniTool):
+#     name = "browser"
+#     description = "使用浏览器打开指定网址"
+#     parameters = {
+#         "url": {
+#             "type": "string", 
+#             "description": "要打开的网址",
+#         }
+#     }
+#     support_os = ["windows"]
+
+#     def __call__(self, url: str):
+#         """使用默认浏览器打开指定网址
+        
+#         Args:
+#             url: 要打开的网址
+            
+#         Returns:
+#             执行状态信息
+#         """
+#         try:
+#             os.system(f'start {url}')
+#             return "网页打开成功"
+#         except Exception as e:
+#             return f"打开失败: {str(e)}"
 
 
 if __name__ == "__main__":
-    print(DiscoverProgram()("beyond compare"))
+    path = 'C:/ProgramData/Microsoft/Windows/Start Menu/Programs/微信/微信.lnk'
+    print(launch(path))

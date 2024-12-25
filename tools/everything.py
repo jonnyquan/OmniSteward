@@ -1,7 +1,6 @@
 from everytools import EveryTools
 from steward_utils import OmniTool, OmniAgent, Config
 import os
-from openai import OpenAI
 
 # pip install git+https://github.com/elliottzheng/everytools.git
 
@@ -151,7 +150,7 @@ class EnhancedEverything(OmniAgent):
         {'key': 'model', 'default': None, 'required': True},
     ]
     name = 'enhanced_everything'
-    description = '用自然语言检索计算机中的文件或文件夹'
+    description = '用自然语言检索计算机中的文件或文件夹，请注意，他不能用来列出文件夹的内容'
     parameters: dict = {
         "query": {
             "type": "string",

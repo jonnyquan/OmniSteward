@@ -46,7 +46,7 @@ tool_names = [
     'zip_dir',
     'cmd',
     # 'ask_kimi',
-    'browser',
+    'start',
     'enhanced_everything',
     'timer',
     'prepare_download',

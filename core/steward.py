@@ -3,6 +3,7 @@ from openai import OpenAI
 import time
 from tools import ToolManager, Config, OmniToolResult, JsonFixer
 from core.task import RemoteToolManager
+from enum import Enum
 
 class HistoryManager:
     '''
@@ -45,15 +46,44 @@ output_type2prefix = {
     "debug": "【调试信息】",
     "error": "【错误】",
     "action": "【动作】",
+    "tool": "【工具】",
 }
+class StewardOutputType(Enum):
+    HISTORY = "history"
+    CONTENT = "content"
+    DEBUG = "debug"
+    ERROR = "error"
+    ACTION = "action"
+    TOOL = "tool"
+
+    def __str__(self):
+        return self.value
+
 
 class StewardOutput:
-    def __init__(self, type: str, data: any):
+    def __init__(self, type: StewardOutputType, data: any):
         self.type = type
         self.data = data
 
     def __str__(self):
         return f"{output_type2prefix[self.type]}: {self.data}"
+
+
+class ToolOutputType(Enum):
+    CALL = "【工具调用】"
+    RESULT = "【工具结果】"
+    ERROR = "【工具错误】"
+
+class ToolOutput(StewardOutput):
+    def __init__(self, output_type: ToolOutputType, tool_name: str, data: any):
+        self.output_type = output_type
+        self.tool_name = tool_name
+        data = f"{output_type.value}{tool_name}: {data}"
+        super().__init__(StewardOutputType.TOOL, data)
+        
+
+    def __str__(self):
+        return self.data
 
 
 class OmniSteward:
@@ -116,19 +146,19 @@ class OmniSteward:
             content = current_message.get("content", "")
 
             if content != "":
-                yield StewardOutput("content", content)
+                yield StewardOutput(StewardOutputType.CONTENT, content)
             else:
-                yield StewardOutput("debug", current_message)
+                yield StewardOutput(StewardOutputType.DEBUG, current_message)
 
             # 处理工具调用
             if tool_calls is None:  # 没有工具调用
-                yield StewardOutput("history", messages)
+                yield StewardOutput(StewardOutputType.HISTORY, messages)
                 break
 
             for tool_call in tool_calls:
                 tool_type = tool_call.get("type")
                 if tool_type == "web_search": # 仅在step系列模型中支持step_web_search工具
-                    yield StewardOutput("debug", f"step_web_search is called")
+                    yield ToolOutput(ToolOutputType.CALL, "step_web_search", None)
                     continue
 
                 fn_call = tool_call.get("function")
@@ -136,20 +166,21 @@ class OmniSteward:
                     fn_name = fn_call["name"]
                     fn_args = self.json_fixer.get_fn_args(fn_call)
                     if fn_args is None:
-                        yield StewardOutput("error", f"工具调用参数解析失败: {fn_call}")
+                        yield StewardOutput(StewardOutputType.ERROR, f"工具调用参数解析失败: {fn_call}")
                         break
-                    yield StewardOutput("debug", f"正在调用工具: {fn_name}, 参数: {fn_args}")
+                    yield ToolOutput(ToolOutputType.CALL, fn_name, fn_args)
 
                     tool_start = time.time()
                     try:
                         fn_res = self.tool_manager.call(fn_name, fn_args)
-                        print(f"DEBUG - 工具调用结果: {fn_res}")
                     except Exception as e:
-                        yield StewardOutput("error", f"工具调用失败: {e}")
+                        yield ToolOutput(ToolOutputType.ERROR, fn_name, f"调用失败: {e}")
                         break
                     if isinstance(fn_res, OmniToolResult) and fn_res.action is not None:
-                        yield StewardOutput("action", fn_res.action) # 创建一个新动作
+                        yield StewardOutput(StewardOutputType.ACTION, fn_res.action) # 创建一个新动作
                         fn_res = fn_res.content
+                    else:
+                        yield ToolOutput(ToolOutputType.RESULT, fn_name, fn_res)
 
                     tool_time = time.time() - tool_start
                     
@@ -160,7 +191,7 @@ class OmniSteward:
                         "tool_call_id": tool_call["id"],
                     }
                     messages.append(tool_message)
-                    yield StewardOutput("debug", {"fn_name": fn_name, "fn_args": fn_args, "fn_res": fn_res, "time": f"{tool_time:.2f}秒"})
+                    yield StewardOutput(StewardOutputType.DEBUG, {"fn_name": fn_name, "fn_args": fn_args, "fn_res": fn_res, "time": f"{tool_time:.2f}秒"})
 
 
 

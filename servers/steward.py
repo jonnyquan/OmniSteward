@@ -4,7 +4,7 @@ import socket
 print(socket.gethostbyname('localhost'))
 from flask import Flask, request, jsonify, send_file
 from werkzeug.middleware.proxy_fix import ProxyFix
-from core.steward import OmniSteward, HistoryManager, StewardOutput
+from core.steward import OmniSteward, HistoryManager, StewardOutput, StewardOutputType
 from core.task import ScheduledTaskRunner
 from core.file import FileManager
 from utils.asr_client import OnlineASR
@@ -138,7 +138,10 @@ def prepare_download_api():
     data = request.json
     if not verify_access_token(data):
         return jsonify({'error': '无效的access_token'}), 401
-    file_id = file_manager.add(data.get('file', ''))
+    try:
+        file_id = file_manager.add(data.get('file', ''))
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
     return jsonify({'file_id': file_id})
 
 @app.route('/api/download', methods=['GET'])
@@ -173,17 +176,17 @@ def chat(query, model, history_id):
     try:
         for output in steward.chat(query, history):
             assert isinstance(output, StewardOutput)
-            if output.type == "history":
+            if output.type == StewardOutputType.HISTORY:
                 new_history_id = f"{time.time():.6f}"
                 history_manager.add(new_history_id, output.data)
                 message = {"type": "history", "history_id": new_history_id}
-            elif output.type == "action":
+            elif output.type == StewardOutputType.ACTION:
                 print(f"DEBUG - 创建动作: {output.data}")
                 message = {"type": "action", "action": output.data}
-            elif output.type == "content":
+            elif output.type == StewardOutputType.CONTENT:
                 message = {"type": "content", "data": output.data}
             else:
-                message = {"type": output.type, "data": str(output.data)}
+                message = {"type": str(output.type), "data": str(output.data)}
             timestamp_in_ms = int(time.time() * 1000)
             kwargs = {"send_time": timestamp_in_ms}
             message.update(kwargs)
@@ -191,6 +194,7 @@ def chat(query, model, history_id):
             socketio.sleep(0)
     except Exception as e:
         socketio.emit('error', {'error': str(e)}, namespace=namespace)
+        raise e
 
 
 @socketio.on('chat')
@@ -202,5 +206,16 @@ def handle_chat(data):
     socketio.start_background_task(chat, query, model, history_id)
 
 
+def open_browser(url, delay=0):
+    import threading
+    def open_browser_thread():
+        time.sleep(delay)
+        os.system(f"start {url}")
+    threading.Thread(target=open_browser_thread).start()
+
+
 if __name__ == '__main__':
+    URL = f"http://localhost:{config.port}"
+    open_browser(URL, delay=5)
+    print(f"INFO - 服务已运行在{config.port}端口，请访问 {URL}")
     socketio.run(app, host='0.0.0.0', port=config.port, debug=args.debug)
